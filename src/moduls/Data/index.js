@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { Wrap } from './style';
+import { Articles, Wrap, StyledLink } from './style';
 import axios from 'axios';
 
 export const Data = () => {
@@ -8,17 +8,18 @@ export const Data = () => {
   const dispatch = useDispatch();
   const articles = useSelector(state => state.articles);
   const loading = useSelector(state => state.loading);
-  const idx = useSelector(state => state.idx); 
+  const isEmpty = useSelector(state => state.isEmpty)
 
 
   const loadArticles = () => {
-    dispatch({ type:"LOAD_ARTICLES", payload: null });
-    if (articles != []){
+    dispatch({ type:"LOAD_ARTICLES", payload: true });
+    if(isEmpty == true){
       axios
       .get("https://baconipsum.com/api/?type=meat-and-filler")
       .then((response) => {
         loadArticlesSuccess(response.data);
       });
+    dispatch({ type:"LOAD_ARTICLES", payload: false });
     }else{
 
     }
@@ -39,13 +40,12 @@ export const Data = () => {
 
   return(  
     <Wrap>
-      {loading ? <div>Loading...</div> :
-      articles.map((data, index) => (
-        <div onClick={searchIndex(index)}>
-          <a href='/article'>{data.split('  ')[0]}</a>
-          <>{idx}</>
-        </div>
-      ))}
+      <Articles>
+        {/* {loading ? <div>Loading...</div> : */}
+        {articles.map((data, index) => (
+          <StyledLink to='/article' onClick={searchIndex(index)}>{data.split('  ')[0]}</StyledLink>
+        ))}
+      </Articles>
     </Wrap>
   );
 };
